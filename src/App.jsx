@@ -41,9 +41,9 @@ const Player = ({ setMessage }) => {
 
   const checkNearDoor = (position) => {
     const doorPositions = [
-      new Vector3(-LOBBY_WIDTH / 2 + WALL_THICKNESS, 0, -10),
-      new Vector3(-LOBBY_WIDTH / 2 + WALL_THICKNESS, 0, 0),
-      new Vector3(-LOBBY_WIDTH / 2 + WALL_THICKNESS, 0, 10)
+      new Vector3(-LOBBY_WIDTH / 3 + WALL_THICKNESS, 0, -10),
+      new Vector3(-LOBBY_WIDTH / 3 + WALL_THICKNESS, 0, 0),
+      new Vector3(-LOBBY_WIDTH / 3 + WALL_THICKNESS, 0, 10)
     ]
 
     for (let i = 0; i < doorPositions.length; i++) {
