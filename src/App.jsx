@@ -11,7 +11,7 @@ const ROOM_SIZE = 10
 const WALL_THICKNESS = 0.2
 const DOOR_WIDTH = 2
 const WALL_COLOR = "#a0a0a0"
-const DOOR_COLOR = "#8B4513"  // Brown color for wooden doors
+const DOOR_COLOR = "#8B4513"
 const DOOR_PROXIMITY = 2.5
 
 const Player = ({ setMessage }) => {
@@ -135,17 +135,20 @@ const Room = ({ position }) => {
       <Box args={[WALL_THICKNESS, 4, ROOM_SIZE]} position={[-ROOM_SIZE/2, 2, 0]}>
         <meshStandardMaterial color={WALL_COLOR} />
       </Box>
-      {/* Right wall */}
-      <Box args={[WALL_THICKNESS, 4, ROOM_SIZE]} position={[ROOM_SIZE/2, 2, 0]}>
+      {/* Right wall (with door) */}
+      <Box args={[WALL_THICKNESS, 4, (ROOM_SIZE - DOOR_WIDTH) / 2]} position={[ROOM_SIZE/2, 2, -(ROOM_SIZE + DOOR_WIDTH) / 4]}>
         <meshStandardMaterial color={WALL_COLOR} />
       </Box>
-      {/* Front wall (with door) */}
+      <Box args={[WALL_THICKNESS, 4, (ROOM_SIZE - DOOR_WIDTH) / 2]} position={[ROOM_SIZE/2, 2, (ROOM_SIZE + DOOR_WIDTH) / 4]}>
+        <meshStandardMaterial color={WALL_COLOR} />
+      </Box>
+      {/* Door on right wall */}
+      <Box args={[WALL_THICKNESS, 3, DOOR_WIDTH]} position={[ROOM_SIZE/2, 1.5, 0]}>
+        <meshStandardMaterial color={DOOR_COLOR} />
+      </Box>
+      {/* Front wall */}
       <Box args={[ROOM_SIZE, 4, WALL_THICKNESS]} position={[0, 2, ROOM_SIZE/2]}>
         <meshStandardMaterial color={WALL_COLOR} />
-      </Box>
-      {/* Door */}
-      <Box args={[DOOR_WIDTH, 3, WALL_THICKNESS]} position={[0, 1.5, ROOM_SIZE/2]}>
-        <meshStandardMaterial color={DOOR_COLOR} />
       </Box>
       {/* Floor */}
       <Plane args={[ROOM_SIZE, ROOM_SIZE]} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
