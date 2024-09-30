@@ -201,7 +201,7 @@ const HospitalWing = ({ setMessage }) => {
       <Box args={[WALL_THICKNESS, 4, LOBBY_LENGTH]} position={[LOBBY_WIDTH/2, 2, 0]}>
         <meshStandardMaterial color={WALL_COLOR} />
       </Box>
-      <Box args={[LOBBY_WIDTH - DOOR_WIDTH * 3, 4, WALL_THICKNESS]} position={[-DOOR_WIDTH * 1.5, 2, -LOBBY_LENGTH/2]}>
+      <Box args={[LOBBY_WIDTH, 4, WALL_THICKNESS]} position={[0, 2, -LOBBY_LENGTH/2]}>
         <meshStandardMaterial color={WALL_COLOR} />
       </Box>
       <Box args={[LOBBY_WIDTH, 4, WALL_THICKNESS]} position={[0, 2, LOBBY_LENGTH/2]}>
