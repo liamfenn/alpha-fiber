@@ -4,6 +4,9 @@ import React, { useRef, useEffect, useState } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Box, Plane, PerspectiveCamera, PointerLockControls, Text } from '@react-three/drei'
 import { Vector3, Box3 } from 'three'
+import OnboardingCards from './components/OnboardingCards';
+import ScenarioDescription from './components/ScenarioDescription';
+import PatientMonitor from './components/PatientMonitor';
 
 const LOBBY_WIDTH = 20
 const LOBBY_LENGTH = 30
@@ -158,6 +161,8 @@ const Room = ({ position }) => {
       <Plane args={[ROOM_SIZE, ROOM_SIZE]} rotation={[Math.PI / 2, 0, 0]} position={[0, 4, 0]}>
         <meshStandardMaterial color="#ffffff" />
       </Plane>
+      {/* Add PatientMonitor */}
+      <PatientMonitor position={[ROOM_SIZE/2 - 1, 2, -ROOM_SIZE/2 + 0.5]} />
       <Text position={[ROOM_SIZE/2 - 0.5, 2, 0]} rotation={[0, -Math.PI/2, 0]} fontSize={0.5}>
         Hospital Room
       </Text>
@@ -231,16 +236,37 @@ const HospitalWing = ({ setMessage }) => {
 }
 
 export default function Component() {
-  const [message, setMessage] = useState("")
+  const [message, setMessage] = useState("");
+  const [showOnboarding, setShowOnboarding] = useState(true);
+  const [showScenario, setShowScenario] = useState(false);
+
+  const handleOnboardingComplete = () => {
+    setShowOnboarding(false);
+    setShowScenario(true);
+  };
+
+  const handleScenarioStart = () => {
+    setShowScenario(false);
+    // Lock the mouse pointer when starting the simulation
+    document.body.requestPointerLock();
+  };
 
   return (
     <div style={{ width: '100%', height: '100vh', position: 'relative' }}>
-      <HospitalWing setMessage={setMessage} />
-      {message && (
-        <div style={{ position: 'absolute', bottom: '16px', left: '50%', transform: 'translateX(-50%)', backgroundColor: 'rgba(0, 0, 0, 0.5)', color: 'white', padding: '8px', borderRadius: '4px' }}>
-          {message}
-        </div>
+      {showOnboarding ? (
+        <OnboardingCards onComplete={handleOnboardingComplete} />
+      ) : showScenario ? (
+        <ScenarioDescription onStart={handleScenarioStart} />
+      ) : (
+        <>
+          <HospitalWing setMessage={setMessage} />
+          {message && (
+            <div style={{ position: 'absolute', bottom: '16px', left: '50%', transform: 'translateX(-50%)', backgroundColor: 'rgba(0, 0, 0, 0.5)', color: 'white', padding: '8px', borderRadius: '4px' }}>
+              {message}
+            </div>
+          )}
+        </>
       )}
     </div>
-  )
+  );
 }
