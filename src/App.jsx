@@ -16,6 +16,7 @@ const DOOR_WIDTH = 2
 const WALL_COLOR = "#a0a0a0"
 const DOOR_COLOR = "#8B4513"
 const DOOR_PROXIMITY = 2.5
+const EHR_PROXIMITY = 2.5
 
 const Player = ({ setMessage }) => {
   const { camera } = useThree()
@@ -26,6 +27,7 @@ const Player = ({ setMessage }) => {
   const roomBounds = useRef(null)
   const nearDoor = useRef(false)
   const currentDoorRef = useRef(null)
+  const nearEHR = useRef(false)
 
   const checkCollision = (newPosition) => {
     const playerBounds = new Box3().setFromCenterAndSize(newPosition, new Vector3(1, 3.4, 1))
@@ -60,6 +62,16 @@ const Player = ({ setMessage }) => {
     currentDoorRef.current = null
   }
 
+  const checkNearEHR = (position) => {
+    const ehrPosition = new Vector3(-LOBBY_WIDTH / 2 - ROOM_SIZE / 2, 0, (currentDoorRef.current - 1) * 10)
+    if (position.distanceTo(ehrPosition) < EHR_PROXIMITY) {
+      nearEHR.current = true
+      return true
+    }
+    nearEHR.current = false
+    return false
+  }
+
   useFrame((state, delta) => {
     velocity.current.set(0, 0, 0)
 
@@ -84,8 +96,12 @@ const Player = ({ setMessage }) => {
     camera.position.y = 1.7
 
     if (!inRoom) checkNearDoor(camera.position)
+    if (inRoom) checkNearEHR(camera.position)
+
     if (nearDoor.current && !inRoom) {
       setMessage("Press 'E' to enter the room")
+    } else if (inRoom && nearEHR.current) {
+      setMessage("Press 'E' to open EHR")
     } else if (inRoom) {
       setMessage("Press 'E' to exit the room")
     } else {
@@ -103,6 +119,8 @@ const Player = ({ setMessage }) => {
           camera.position.copy(roomCenter)
           camera.position.x += ROOM_SIZE / 2 - 1
           roomBounds.current = new Box3().setFromCenterAndSize(roomCenter, new Vector3(ROOM_SIZE - 1, 4, ROOM_SIZE - 1))
+        } else if (inRoom && nearEHR.current) {
+          window.open('https://structuredskew.com/rxReality-emr/patients/id/index.html', '_blank')
         } else if (inRoom) {
           setInRoom(false)
           camera.position.x = -LOBBY_WIDTH / 2 + 1
@@ -161,11 +179,8 @@ const Room = ({ position }) => {
       <Plane args={[ROOM_SIZE, ROOM_SIZE]} rotation={[Math.PI / 2, 0, 0]} position={[0, 4, 0]}>
         <meshStandardMaterial color="#ffffff" />
       </Plane>
-      {/* Add PatientMonitor */}
-      <PatientMonitor position={[ROOM_SIZE/2 - 1, 2, -ROOM_SIZE/2 + 0.5]} />
-      <Text position={[ROOM_SIZE/2 - 0.5, 2, 0]} rotation={[0, -Math.PI/2, 0]} fontSize={0.5}>
-        Hospital Room
-      </Text>
+      {/* Add EHR monitor */}
+      <EHRMonitor position={[0, 0, 0]} />
     </group>
   )
 }
@@ -175,6 +190,37 @@ const Door = ({ position }) => {
     <Box args={[WALL_THICKNESS, 3, DOOR_WIDTH]} position={position}>
       <meshStandardMaterial color={DOOR_COLOR} />
     </Box>
+  )
+}
+
+const EHRMonitor = ({ position }) => {
+  return (
+    <group position={position}>
+      {/* Monitor Stand */}
+      <Box args={[0.1, 2, 0.1]} position={[0, 1, 0]}>
+        <meshStandardMaterial color="#404040" />
+      </Box>
+      {/* Base */}
+      <Box args={[0.5, 0.1, 0.5]} position={[0, 0, 0]}>
+        <meshStandardMaterial color="#404040" />
+      </Box>
+      {/* Monitor */}
+      <Box args={[1, 0.6, 0.1]} position={[0, 2, 0]}>
+        <meshStandardMaterial color="#000000" />
+      </Box>
+      {/* Screen */}
+      <Box args={[0.95, 0.55, 0.01]} position={[0, 2, 0.06]}>
+        <meshStandardMaterial color="#ffffff" />
+      </Box>
+      {/* Label */}
+      <Text 
+        position={[0, 2.4, 0]} 
+        scale={[0.2, 0.2, 0.2]} 
+        color="black"
+      >
+        EHR Monitor
+      </Text>
+    </group>
   )
 }
 
